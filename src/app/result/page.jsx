@@ -17,10 +17,20 @@ export default function ResultPage() {
   };
 
   const handleSubmit = () => {
+    const allAnswered = questions.every((q) =>
+      result.find((r) => r.id === q.id && r.answer)
+    );
+
     if (!isChecked) {
       alert("Please confirm the declaration before submitting.");
       return;
     }
+
+    if (!allAnswered) {
+      alert("Please answer all questions before submitting.");
+      return;
+    }
+
     alert("Submitted successfully!");
   };
 

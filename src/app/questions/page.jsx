@@ -8,14 +8,8 @@ import questions from "./quesions";
 export default function QuestionsPage() {
   const router = useRouter();
   const [isVertical, setIsVertical] = useState(false);
-
-  const {
-    result,
-    setResult,
-    currentQuestion,
-    setCurrentQuestion,
-    setQuizSummary,
-  } = useQuizstore();
+  const { result, setResult, currentQuestion, setCurrentQuestion } =
+    useQuizstore();
 
   const question = questions[currentQuestion];
 
@@ -44,26 +38,12 @@ export default function QuestionsPage() {
     setResult([...updated, { id: questionId, answer: option }]);
   };
 
-  const handleSubmit = () => {
-    const correctans = result.filter((userAns) =>
-      questions.some((q) => q.id === userAns.id && q.answer === userAns.answer)
-    ).length;
-
-    setQuizSummary({
-      total: questions.length,
-      answered: result.length,
-      correct: correctans,
-    });
-
-    router.push("/result");
-  };
-
   const isAttempted = (qId) => result.some((r) => r.id === qId);
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Header */}
-      <div className="w-full bg-gray-200 flex justify-between items-center px-6 py-3 sticky top-0 z-10">
+      <div className="w-full bg-[#ebebeb] flex justify-between items-center px-6 py-3 sticky top-0 z-10 border-b border-gray-300">
         <div className="flex-1" />
         <div className="flex justify-center absolute left-1/2 -translate-x-1/2">
           <div className="inline-flex bg-white border border-orange-500 rounded-lg overflow-hidden">
@@ -87,59 +67,64 @@ export default function QuestionsPage() {
         </div>
         <button
           type="button"
-          onClick={handleSubmit}
+          onClick={() => router.push("/result")}
           className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg shadow"
         >
-          Submit
+          Review
         </button>
       </div>
 
       {isVertical ? (
         <div className="flex flex-1 overflow-hidden">
-          <div className="flex-1 overflow-y-auto pr-4 max-h-[80vh] space-y-8 py-6 px-8">
-            {questions.map((q, index) => {
-              const isCurrent = index === currentQuestion;
-              return (
-                <div
-                  key={q.id}
-                  id={`question-${index}`}
-                  className={`p-6 rounded-xl shadow text-gray-900 transition border-2 ${
-                    isCurrent
-                      ? "border-orange-500 bg-orange-50"
-                      : "border-gray-300 bg-white"
-                  }`}
-                >
-                  <h3 className="text-xl font-semibold mb-4">{q.text}</h3>
-                  <ul className="space-y-4">
-                    {q.options.map((opt, i) => (
-                      <li key={i} className="flex items-center space-x-3">
-                        <input
-                          type="radio"
-                          id={`q${index}-opt${i}`}
-                          name={`q${index}`}
-                          value={opt}
-                          checked={
-                            result.find((r) => r.id === q.id)?.answer === opt
-                          }
-                          onChange={() => {
-                            handleAnswer(q.id, opt);
-                            setCurrentQuestion(index);
-                          }}
-                          className="form-radio h-5 w-5 text-purple-600"
-                        />
-                        <label
-                          htmlFor={`q${index}-opt${i}`}
-                          className="cursor-pointer text-lg"
-                        >
-                          {opt}
-                        </label>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })}
+          {/* Centered Question Wrapper */}
+          <div className="flex-1 overflow-y-auto max-h-[80vh] py-6 px-4 flex justify-center">
+            <div className="w-full max-w-2xl space-y-8">
+              {questions.map((q, index) => {
+                const isCurrent = index === currentQuestion;
+                return (
+                  <div
+                    key={q.id}
+                    id={`question-${index}`}
+                    className={`p-6 rounded-xl shadow text-gray-900 transition border-2 ${
+                      isCurrent
+                        ? "border-orange-500 bg-orange-50"
+                        : "border-gray-300 bg-[#ebebeb]"
+                    }`}
+                  >
+                    <h3 className="text-xl font-semibold mb-4">{q.text}</h3>
+                    <ul className="space-y-4">
+                      {q.options.map((opt, i) => (
+                        <li key={i} className="flex items-center space-x-3">
+                          <input
+                            type="radio"
+                            id={`q${index}-opt${i}`}
+                            name={`q${index}`}
+                            value={opt}
+                            checked={
+                              result.find((r) => r.id === q.id)?.answer === opt
+                            }
+                            onChange={() => {
+                              handleAnswer(q.id, opt);
+                              setCurrentQuestion(index);
+                            }}
+                            className="form-radio h-5 w-5 text-purple-600"
+                          />
+                          <label
+                            htmlFor={`q${index}-opt${i}`}
+                            className="cursor-pointer text-lg"
+                          >
+                            {opt}
+                          </label>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
           </div>
+
+          {/* Carousel */}
           <div className="bg-gray-200 p-4 flex flex-col items-center sticky top-0">
             <div className="flex flex-col gap-2 mb-2">
               {questions.map((q, index) => {
@@ -170,7 +155,7 @@ export default function QuestionsPage() {
         </div>
       ) : (
         <div className="flex-1 flex flex-col items-center justify-center">
-          <div className="bg-gray-100 p-10 rounded-xl shadow-lg max-w-4xl w-full mt-8 min-h-[300px]">
+          <div className="bg-[#ebebeb] p-10 rounded-xl shadow max-w-4xl w-full mt-8 min-h-[300px]">
             <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">
               {question.text}
             </h3>
@@ -201,7 +186,8 @@ export default function QuestionsPage() {
             </form>
           </div>
 
-          <div className="w-full bg-gray-200 mt-auto py-6 px-6 flex items-center justify-center gap-20">
+          {/* Footer with top light gray border */}
+          <div className="w-full bg-[#ebebeb] mt-auto py-6 px-6 flex items-center justify-center gap-20 border-t border-gray-300">
             <button
               onClick={handlePrev}
               className="bg-orange-500 text-white px-4 py-2 rounded-lg shadow"
